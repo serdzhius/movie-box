@@ -1,6 +1,6 @@
-[Movie Box](https://serdzhius.github.io/movie-box/)
+#  [Movie Box](https://serdzhius.github.io/movie-box/)
 
-### [Movie Box](https://serdzhius.github.io/movie-box/) инетересный сайт с где мало html и много js, подключенн api, полностью рабочий сайт.
+### Movie Box инетересный сайт с где мало html и много js, подключенн api, полностью рабочий сайт.
 - Подключена api
 - Всё само подгружается и обновляется
 - Актуальная информация из Кинопоиска
