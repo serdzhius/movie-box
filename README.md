@@ -1,1 +1,1 @@
-# [MovieBox](https://github.com/serdzhius/movie-box.git)
+# [MovieBox](https://serdzhius.github.io/movie-box/)
