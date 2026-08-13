@@ -279,21 +279,21 @@
             paginationItems.forEach((item => item.classList.remove("_active")));
             if (paginationItems.length > 0) paginationItems[0].classList.add("_active");
             for (let i = 5; i < paginationItems.length; i++) paginationItems[i].style.display = "none";
-            if (genre === action) getMovies_genres(API_URL_ACTION);
-            if (genre === comedy) getMovies_genres(API_URL_COMEDY);
-            if (genre === drama) getMovies_genres(API_URL_DRAMA);
-            if (genre === horror) getMovies_genres(API_URL_HORROR);
-            if (genre === scifi) getMovies_genres(API_URL_SCIFI);
-            if (genre === thriller) getMovies_genres(API_URL_THRILLER);
-            if (genre === fantasy) getMovies_genres(API_URL_FANTASY);
-            if (genre === adventure) getMovies_genres(API_URL_ADVENTURE);
-            if (genre === detective) getMovies_genres(API_URL_DETECTIVE);
-            if (genre === melodrama) getMovies_genres(API_URL_MELODRAMA);
-            if (genre === animatedmovies) getMovies_genres(API_URL_ANIMATEDMOVIES);
-            if (genre === anime) getMovies_genres(API_URL_ANIME);
-            if (genre === script_history) getMovies_genres(API_URL_HISTORY);
-            if (genre === documentaries) getMovies_genres(API_URL_DOCUMENTARIES);
-            if (genre === shortfilms) getMovies_genres(API_URL_SHORTFILMS);
+            const yearValue = document.getElementById("year-select")?.value || "";
+            let baseUrl = "";
+            if (genre === action) baseUrl = API_URL_ACTION; else if (genre === comedy) baseUrl = API_URL_COMEDY; else if (genre === drama) baseUrl = API_URL_DRAMA; else if (genre === horror) baseUrl = API_URL_HORROR; else if (genre === scifi) baseUrl = API_URL_SCIFI; else if (genre === thriller) baseUrl = API_URL_THRILLER; else if (genre === fantasy) baseUrl = API_URL_FANTASY; else if (genre === adventure) baseUrl = API_URL_ADVENTURE; else if (genre === detective) baseUrl = API_URL_DETECTIVE; else if (genre === melodrama) baseUrl = API_URL_MELODRAMA; else if (genre === animatedmovies) baseUrl = API_URL_ANIMATEDMOVIES; else if (genre === anime) baseUrl = API_URL_ANIME; else if (genre === script_history) baseUrl = API_URL_HISTORY; else if (genre === documentaries) baseUrl = API_URL_DOCUMENTARIES; else if (genre === shortfilms) baseUrl = API_URL_SHORTFILMS;
+            if (yearValue && baseUrl) {
+                baseUrl = baseUrl.replace("&page=", "");
+                if (yearValue.includes("-")) {
+                    const [from, to] = yearValue.split("-");
+                    baseUrl += `&yearFrom=${from}&yearTo=${to}`;
+                } else baseUrl += `&yearFrom=${yearValue}&yearTo=${yearValue}`;
+                baseUrl += "&page=";
+            }
+            if (baseUrl) {
+                getMovies_genres(baseUrl);
+                window.currentApiUrl = baseUrl;
+            }
             if (typeof closeSidebar === "function") closeSidebar();
         }));
     }));
@@ -485,6 +485,27 @@
     }));
     window.addEventListener("keydown", (e => {
         if (e.keyCode === 27) closeModal();
+    }));
+    const genreSelect = document.getElementById("genre-select");
+    const yearSelect = document.getElementById("year-select");
+    const findBtn = document.getElementById("find-btn");
+    findBtn.addEventListener("click", (() => {
+        const genre = genreSelect.value;
+        const yearValue = yearSelect.value;
+        let url = "https://kinopoiskapiunofficial.tech/api/v2.2/films?order=RATING&type=ALL&ratingFrom=5&ratingTo=10";
+        if (genre) url += `&genres=${genre}`;
+        if (yearValue) if (yearValue.includes("-")) {
+            const [from, to] = yearValue.split("-");
+            url += `&yearFrom=${from}&yearTo=${to}`;
+        } else url += `&yearFrom=${yearValue}&yearTo=${yearValue}`;
+        url += "&page=";
+        document.querySelectorAll(".menu__link, .genres-list__item").forEach((el => {
+            el.classList.remove("_active");
+        }));
+        document.querySelectorAll(".pagination__item").forEach((el => el.classList.remove("_active")));
+        document.querySelector(".pagination__item")?.classList.add("_active");
+        getMovies_genres(url + "1");
+        window.currentApiUrl = url;
     }));
     window["FLS"] = true;
     isWebp();

@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="format-detection" content="telephone=no">
 	<!-- <style>body{opacity: 0;}</style> -->
-	<link rel="stylesheet" href="css/style.min.css?_v=20260719185202">
+	<link rel="stylesheet" href="css/style.min.css?_v=20260813144758">
 	<link rel="shortcut icon" href="favicon.ico">
 	<!-- <meta name="robots" content="noindex, nofollow"> -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,69 +46,7 @@
 						</ul>
 					</nav>
 
-					<!-- Кнопка открытия меню -->
-					<button class="genres-button" type="button" aria-label="Открыть меню жанров">
-						<span class="genres-button__icon">☰</span>
-						<span class="genres-button__text">Жанры</span>
-					</button>
 
-					<!-- Боковое выплывающее меню -->
-					<aside class="sidebar" id="genres-sidebar">
-						<div class="sidebar__header">
-							<h2 class="sidebar__title">Жанры</h2>
-							<button class="sidebar__close" type="button" aria-label="Закрыть меню">✕</button>
-						</div>
-
-						<nav class="sidebar__nav">
-							<ul class="genres-list">
-								<li class="genres-list__item _action">
-									<a href="#" class="genres-list__link">Боевик</a>
-								</li>
-								<li class="genres-list__item _comedy">
-									<a href="#" class="genres-list__link">Комедия</a>
-								</li>
-								<li class="genres-list__item _drama">
-									<a href="#" class="genres-list__link">Драма</a>
-								</li>
-								<li class="genres-list__item _horror">
-									<a href="#" class="genres-list__link">Ужасы</a>
-								</li>
-								<li class="genres-list__item _scifi">
-									<a href="#" class="genres-list__link">Фантастика</a>
-								</li>
-								<li class="genres-list__item _thriller">
-									<a href="#" class="genres-list__link">Триллер</a>
-								</li>
-								<li class="genres-list__item _fantasy">
-									<a href="#" class="genres-list__link">Фэнтези</a>
-								</li>
-								<li class="genres-list__item _adventure">
-									<a href="#" class="genres-list__link">Приключения</a>
-								</li>
-								<li class="genres-list__item _detective">
-									<a href="#" class="genres-list__link">Детектив</a>
-								</li>
-								<li class="genres-list__item _melodrama">
-									<a href="#" class="genres-list__link">Мелодрама</a>
-								</li>
-								<li class="genres-list__item _animatedmovies">
-									<a href="#" class="genres-list__link">Мультфильмы</a>
-								</li>
-								<li class="genres-list__item _anime">
-									<a href="#" class="genres-list__link">Аниме</a>
-								</li>
-								<li class="genres-list__item _history">
-									<a href="#" class="genres-list__link">История</a>
-								</li>
-								<li class="genres-list__item _documentaries">
-									<a href="#" class="genres-list__link">Документальный</a>
-								</li>
-								<li class="genres-list__item _shortfilms">
-									<a href="#" class="genres-list__link">Короткометражка</a>
-								</li>
-							</ul>
-						</nav>
-					</aside>
 
 					<!-- Оверлей для затемнения фона -->
 					<div class="overlay" id="overlay"></div>
@@ -119,6 +57,108 @@
 			</div>
 		</header>
 		<main class="page__container">
+
+			<!-- Кнопка открытия меню -->
+			<button class="genres-button" type="button" aria-label="Открыть меню жанров">
+				<span class="genres-button__icon">☰</span>
+				<span class="genres-button__text">Жанры</span>
+			</button>
+
+			<div class="find-bar">
+				<span class="find-bar__label">Найти лучшие фильмы</span>
+
+				<select class="find-bar__select" id="genre-select">
+					<option value="">ЛЮБОГО ЖАНРА</option>
+					<option value="11">Боевик</option>
+					<option value="13">Комедия</option>
+					<option value="2">Драма</option>
+					<option value="17">Ужасы</option>
+					<option value="6">Фантастика</option>
+					<option value="1">Триллер</option>
+					<option value="12">Фэнтези</option>
+					<option value="7">Приключения</option>
+					<option value="5">Детектив</option>
+					<option value="4">Мелодрама</option>
+					<option value="18">Мультфильмы</option>
+					<option value="24">Аниме</option>
+					<option value="15">История</option>
+					<option value="22">Документальный</option>
+					<option value="23">Короткометражка</option>
+				</select>
+
+				<select class="find-bar__select" id="year-select">
+					<option value="">ЗА ВСЕ ВРЕМЯ</option>
+					<option value="2026">2026</option>
+					<option value="2025">2025</option>
+					<option value="2024">2024</option>
+					<option value="2023">2023</option>
+					<option value="2020-2026">2020–2026</option>
+					<option value="2010-2019">2010–2019</option>
+					<option value="2000-2009">2000–2009</option>
+					<option value="1990-1999">1990–1999</option>
+				</select>
+
+				<button class="find-bar__btn" id="find-btn" type="button">Поехали!</button>
+			</div>
+
+			<!-- Боковое выплывающее меню -->
+			<aside class="sidebar" id="genres-sidebar">
+				<div class="sidebar__header">
+					<h2 class="sidebar__title">Жанры</h2>
+					<button class="sidebar__close" type="button" aria-label="Закрыть меню">✕</button>
+				</div>
+
+				<nav class="sidebar__nav">
+					<ul class="genres-list">
+						<li class="genres-list__item _action">
+							<a href="#" class="genres-list__link">Боевик</a>
+						</li>
+						<li class="genres-list__item _comedy">
+							<a href="#" class="genres-list__link">Комедия</a>
+						</li>
+						<li class="genres-list__item _drama">
+							<a href="#" class="genres-list__link">Драма</a>
+						</li>
+						<li class="genres-list__item _horror">
+							<a href="#" class="genres-list__link">Ужасы</a>
+						</li>
+						<li class="genres-list__item _scifi">
+							<a href="#" class="genres-list__link">Фантастика</a>
+						</li>
+						<li class="genres-list__item _thriller">
+							<a href="#" class="genres-list__link">Триллер</a>
+						</li>
+						<li class="genres-list__item _fantasy">
+							<a href="#" class="genres-list__link">Фэнтези</a>
+						</li>
+						<li class="genres-list__item _adventure">
+							<a href="#" class="genres-list__link">Приключения</a>
+						</li>
+						<li class="genres-list__item _detective">
+							<a href="#" class="genres-list__link">Детектив</a>
+						</li>
+						<li class="genres-list__item _melodrama">
+							<a href="#" class="genres-list__link">Мелодрама</a>
+						</li>
+						<li class="genres-list__item _animatedmovies">
+							<a href="#" class="genres-list__link">Мультфильмы</a>
+						</li>
+						<li class="genres-list__item _anime">
+							<a href="#" class="genres-list__link">Аниме</a>
+						</li>
+						<li class="genres-list__item _history">
+							<a href="#" class="genres-list__link">История</a>
+						</li>
+						<li class="genres-list__item _documentaries">
+							<a href="#" class="genres-list__link">Документальный</a>
+						</li>
+						<li class="genres-list__item _shortfilms">
+							<a href="#" class="genres-list__link">Короткометражка</a>
+						</li>
+					</ul>
+				</nav>
+			</aside>
+
 			<div class="movies"></div>
 			<div class="modal"></div>
 
@@ -157,7 +197,7 @@
 		</div>
 	</div>
 </div> -->
-	<script src="js/app.min.js?_v=20260719185202"></script>
+	<script src="js/app.min.js?_v=20260813144758"></script>
 </body>
 
 </html>
