@@ -237,10 +237,10 @@
     const melodrama = document.querySelector("._melodrama");
     const animatedmovies = document.querySelector("._animatedmovies");
     const anime = document.querySelector("._anime");
-    const script_history = document.querySelector("._history");
+    const files_script_history = document.querySelector("._history");
     const documentaries = document.querySelector("._documentaries");
     const shortfilms = document.querySelector("._shortfilms");
-    const genreLinks = [ action, comedy, drama, horror, scifi, thriller, fantasy, adventure, detective, melodrama, animatedmovies, anime, script_history, documentaries, shortfilms ];
+    const genreLinks = [ action, comedy, drama, horror, scifi, thriller, fantasy, adventure, detective, melodrama, animatedmovies, anime, files_script_history, documentaries, shortfilms ];
     paginationItems.forEach((item => {
         item.addEventListener("click", (() => {
             paginationItems.forEach((item => {
@@ -248,10 +248,12 @@
             }));
             item.classList.add("_active");
             const activeContent = item.textContent;
-            function apiClass() {
-                if (films.classList.contains("_active")) getMovies_films(API_URL_FILMS + activeContent); else if (serials.classList.contains("_active")) getMovies_serials(API_URL_SERIALS + activeContent); else if (miniSerials.classList.contains("_active")) getMovies_miniSerials(API_URL_MINI_SERIALS + activeContent); else if (tvShow.classList.contains("_active")) getMovies_tvShow(API_URL_TV_SHOW + activeContent); else if (top250.classList.contains("_active")) getMovies_250(API_URL_POPULAR_250 + activeContent); else if (action && action.classList.contains("_active")) getMovies_genres(API_URL_ACTION + activeContent); else if (comedy && comedy.classList.contains("_active")) getMovies_genres(API_URL_COMEDY + activeContent); else if (drama && drama.classList.contains("_active")) getMovies_genres(API_URL_DRAMA + activeContent); else if (horror && horror.classList.contains("_active")) getMovies_genres(API_URL_HORROR + activeContent); else if (scifi && scifi.classList.contains("_active")) getMovies_genres(API_URL_SCIFI + activeContent); else if (thriller && thriller.classList.contains("_active")) getMovies_genres(API_URL_THRILLER + activeContent); else if (fantasy && fantasy.classList.contains("_active")) getMovies_genres(API_URL_FANTASY + activeContent); else if (adventure && adventure.classList.contains("_active")) getMovies_genres(API_URL_ADVENTURE + activeContent); else if (detective && detective.classList.contains("_active")) getMovies_genres(API_URL_DETECTIVE + activeContent); else if (melodrama && melodrama.classList.contains("_active")) getMovies_genres(API_URL_MELODRAMA + activeContent); else if (animatedmovies && animatedmovies.classList.contains("_active")) getMovies_genres(API_URL_ANIMATEDMOVIES + activeContent); else if (anime && anime.classList.contains("_active")) getMovies_genres(API_URL_ANIME + activeContent); else if (script_history && script_history.classList.contains("_active")) getMovies_genres(API_URL_HISTORY + activeContent); else if (documentaries && documentaries.classList.contains("_active")) getMovies_genres(API_URL_DOCUMENTARIES + activeContent); else if (shortfilms && shortfilms.classList.contains("_active")) getMovies_genres(API_URL_SHORTFILMS + activeContent); else getMovies(API_URL_POPULAR + activeContent);
+            if (window.currentApiUrl) getMovies_genres(window.currentApiUrl + activeContent); else {
+                function apiClass() {
+                    if (films.classList.contains("_active")) getMovies_films(API_URL_FILMS + activeContent); else if (serials.classList.contains("_active")) getMovies_serials(API_URL_SERIALS + activeContent); else if (miniSerials.classList.contains("_active")) getMovies_miniSerials(API_URL_MINI_SERIALS + activeContent); else if (tvShow.classList.contains("_active")) getMovies_tvShow(API_URL_TV_SHOW + activeContent); else if (top250.classList.contains("_active")) getMovies_250(API_URL_POPULAR_250 + activeContent); else if (action && action.classList.contains("_active")) getMovies_genres(API_URL_ACTION + activeContent); else if (comedy && comedy.classList.contains("_active")) getMovies_genres(API_URL_COMEDY + activeContent); else if (drama && drama.classList.contains("_active")) getMovies_genres(API_URL_DRAMA + activeContent); else if (horror && horror.classList.contains("_active")) getMovies_genres(API_URL_HORROR + activeContent); else if (scifi && scifi.classList.contains("_active")) getMovies_genres(API_URL_SCIFI + activeContent); else if (thriller && thriller.classList.contains("_active")) getMovies_genres(API_URL_THRILLER + activeContent); else if (fantasy && fantasy.classList.contains("_active")) getMovies_genres(API_URL_FANTASY + activeContent); else if (adventure && adventure.classList.contains("_active")) getMovies_genres(API_URL_ADVENTURE + activeContent); else if (detective && detective.classList.contains("_active")) getMovies_genres(API_URL_DETECTIVE + activeContent); else if (melodrama && melodrama.classList.contains("_active")) getMovies_genres(API_URL_MELODRAMA + activeContent); else if (animatedmovies && animatedmovies.classList.contains("_active")) getMovies_genres(API_URL_ANIMATEDMOVIES + activeContent); else if (anime && anime.classList.contains("_active")) getMovies_genres(API_URL_ANIME + activeContent); else if (script_history && script_history.classList.contains("_active")) getMovies_genres(API_URL_HISTORY + activeContent); else if (documentaries && documentaries.classList.contains("_active")) getMovies_genres(API_URL_DOCUMENTARIES + activeContent); else if (shortfilms && shortfilms.classList.contains("_active")) getMovies_genres(API_URL_SHORTFILMS + activeContent); else getMovies(API_URL_POPULAR + activeContent);
+                }
+                apiClass();
             }
-            apiClass();
             window.scrollTo({
                 top: 0,
                 behavior: "smooth"
@@ -281,7 +283,7 @@
             for (let i = 5; i < paginationItems.length; i++) paginationItems[i].style.display = "none";
             const yearValue = document.getElementById("year-select")?.value || "";
             let baseUrl = "";
-            if (genre === action) baseUrl = API_URL_ACTION; else if (genre === comedy) baseUrl = API_URL_COMEDY; else if (genre === drama) baseUrl = API_URL_DRAMA; else if (genre === horror) baseUrl = API_URL_HORROR; else if (genre === scifi) baseUrl = API_URL_SCIFI; else if (genre === thriller) baseUrl = API_URL_THRILLER; else if (genre === fantasy) baseUrl = API_URL_FANTASY; else if (genre === adventure) baseUrl = API_URL_ADVENTURE; else if (genre === detective) baseUrl = API_URL_DETECTIVE; else if (genre === melodrama) baseUrl = API_URL_MELODRAMA; else if (genre === animatedmovies) baseUrl = API_URL_ANIMATEDMOVIES; else if (genre === anime) baseUrl = API_URL_ANIME; else if (genre === script_history) baseUrl = API_URL_HISTORY; else if (genre === documentaries) baseUrl = API_URL_DOCUMENTARIES; else if (genre === shortfilms) baseUrl = API_URL_SHORTFILMS;
+            if (genre === action) baseUrl = API_URL_ACTION; else if (genre === comedy) baseUrl = API_URL_COMEDY; else if (genre === drama) baseUrl = API_URL_DRAMA; else if (genre === horror) baseUrl = API_URL_HORROR; else if (genre === scifi) baseUrl = API_URL_SCIFI; else if (genre === thriller) baseUrl = API_URL_THRILLER; else if (genre === fantasy) baseUrl = API_URL_FANTASY; else if (genre === adventure) baseUrl = API_URL_ADVENTURE; else if (genre === detective) baseUrl = API_URL_DETECTIVE; else if (genre === melodrama) baseUrl = API_URL_MELODRAMA; else if (genre === animatedmovies) baseUrl = API_URL_ANIMATEDMOVIES; else if (genre === anime) baseUrl = API_URL_ANIME; else if (genre === files_script_history) baseUrl = API_URL_HISTORY; else if (genre === documentaries) baseUrl = API_URL_DOCUMENTARIES; else if (genre === shortfilms) baseUrl = API_URL_SHORTFILMS;
             if (yearValue && baseUrl) {
                 baseUrl = baseUrl.replace("&page=", "");
                 if (yearValue.includes("-")) {
@@ -298,19 +300,31 @@
         }));
     }));
     films.addEventListener("click", (() => {
+        window.currentApiUrl = null;
         getMovies_films(API_URL_FILMS);
     }));
     serials.addEventListener("click", (() => {
+        window.currentApiUrl = null;
         getMovies_serials(API_URL_SERIALS);
     }));
     miniSerials.addEventListener("click", (() => {
+        window.currentApiUrl = null;
         getMovies_miniSerials(API_URL_MINI_SERIALS);
     }));
     tvShow.addEventListener("click", (() => {
+        window.currentApiUrl = null;
         getMovies_tvShow(API_URL_TV_SHOW);
     }));
     top250.addEventListener("click", (() => {
+        window.currentApiUrl = null;
         getMovies_250(API_URL_POPULAR_250);
+    }));
+    headerLogo.addEventListener("click", (() => {
+        window.currentApiUrl = null;
+        genreLinks.forEach((genre => {
+            if (genre) genre.classList.remove("_active");
+        }));
+        getMovies(API_URL_POPULAR);
     }));
     headerLogo.addEventListener("click", (() => {
         genreLinks.forEach((genre => {
