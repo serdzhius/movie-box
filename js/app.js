@@ -216,9 +216,7 @@
     const API_URL_SHORTFILMS = "https://kinopoiskapiunofficial.tech/api/v2.2/films?order=NUM_VOTE&type=ALL&ratingFrom=5&ratingTo=10&genres=23&page=";
     const API_URL_SEARCH = "https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=";
     const API_URL_MOVIE_DETAILS = "https://kinopoiskapiunofficial.tech/api/v2.2/films/";
-    const paginationItems = document.querySelectorAll(".pagination__item");
     const menuLink = document.querySelectorAll(".menu__link");
-    document.querySelector("._filter");
     const films = document.querySelector("._films");
     const serials = document.querySelector("._serials");
     const miniSerials = document.querySelector("._mini-serials");
@@ -237,275 +235,308 @@
     const melodrama = document.querySelector("._melodrama");
     const animatedmovies = document.querySelector("._animatedmovies");
     const anime = document.querySelector("._anime");
-    const files_script_history = document.querySelector("._history");
+    const historyGenre = document.querySelector("._history");
     const documentaries = document.querySelector("._documentaries");
     const shortfilms = document.querySelector("._shortfilms");
-    const genreLinks = [ action, comedy, drama, horror, scifi, thriller, fantasy, adventure, detective, melodrama, animatedmovies, anime, files_script_history, documentaries, shortfilms ];
-    paginationItems.forEach((item => {
-        item.addEventListener("click", (() => {
-            paginationItems.forEach((item => {
-                item.classList.remove("_active");
-            }));
-            item.classList.add("_active");
-            const activeContent = item.textContent;
-            if (window.currentApiUrl) getMovies_genres(window.currentApiUrl + activeContent); else {
-                function apiClass() {
-                    if (films.classList.contains("_active")) getMovies_films(API_URL_FILMS + activeContent); else if (serials.classList.contains("_active")) getMovies_serials(API_URL_SERIALS + activeContent); else if (miniSerials.classList.contains("_active")) getMovies_miniSerials(API_URL_MINI_SERIALS + activeContent); else if (tvShow.classList.contains("_active")) getMovies_tvShow(API_URL_TV_SHOW + activeContent); else if (top250.classList.contains("_active")) getMovies_250(API_URL_POPULAR_250 + activeContent); else if (action && action.classList.contains("_active")) getMovies_genres(API_URL_ACTION + activeContent); else if (comedy && comedy.classList.contains("_active")) getMovies_genres(API_URL_COMEDY + activeContent); else if (drama && drama.classList.contains("_active")) getMovies_genres(API_URL_DRAMA + activeContent); else if (horror && horror.classList.contains("_active")) getMovies_genres(API_URL_HORROR + activeContent); else if (scifi && scifi.classList.contains("_active")) getMovies_genres(API_URL_SCIFI + activeContent); else if (thriller && thriller.classList.contains("_active")) getMovies_genres(API_URL_THRILLER + activeContent); else if (fantasy && fantasy.classList.contains("_active")) getMovies_genres(API_URL_FANTASY + activeContent); else if (adventure && adventure.classList.contains("_active")) getMovies_genres(API_URL_ADVENTURE + activeContent); else if (detective && detective.classList.contains("_active")) getMovies_genres(API_URL_DETECTIVE + activeContent); else if (melodrama && melodrama.classList.contains("_active")) getMovies_genres(API_URL_MELODRAMA + activeContent); else if (animatedmovies && animatedmovies.classList.contains("_active")) getMovies_genres(API_URL_ANIMATEDMOVIES + activeContent); else if (anime && anime.classList.contains("_active")) getMovies_genres(API_URL_ANIME + activeContent); else if (script_history && script_history.classList.contains("_active")) getMovies_genres(API_URL_HISTORY + activeContent); else if (documentaries && documentaries.classList.contains("_active")) getMovies_genres(API_URL_DOCUMENTARIES + activeContent); else if (shortfilms && shortfilms.classList.contains("_active")) getMovies_genres(API_URL_SHORTFILMS + activeContent); else getMovies(API_URL_POPULAR + activeContent);
-                }
-                apiClass();
-            }
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
+    const genreLinks = [ action, comedy, drama, horror, scifi, thriller, fantasy, adventure, detective, melodrama, animatedmovies, anime, historyGenre, documentaries, shortfilms ];
+    window.currentApiUrl = API_URL_POPULAR;
+    window.currentMode = "popular";
+    window.currentPage = 1;
+    function updatePagination(totalPages, activePage = 1) {
+        const list = document.querySelector(".pagination__list");
+        if (!list) return;
+        const pages = Math.max(1, Math.min(Number(totalPages) || 1, 20));
+        list.innerHTML = "";
+        for (let i = 1; i <= pages; i++) {
+            const li = document.createElement("li");
+            li.className = "pagination__item" + (i === Number(activePage) ? " _active" : "");
+            li.textContent = String(i);
+            list.appendChild(li);
+        }
+    }
+    function loadByMode(page) {
+        window.currentPage = Number(page) || 1;
+        const url = (window.currentApiUrl || API_URL_POPULAR) + window.currentPage;
+        switch (window.currentMode) {
+          case "films":
+            getMovies_films(url);
+            break;
+
+          case "serials":
+            getMovies_serials(url);
+            break;
+
+          case "mini":
+            getMovies_miniSerials(url);
+            break;
+
+          case "tv":
+            getMovies_tvShow(url);
+            break;
+
+          case "top250":
+            getMovies_250(url);
+            break;
+
+          case "genres":
+            getMovies_genres(url);
+            break;
+
+          case "search":
+            getMovies(url);
+            break;
+
+          default:
+            getMovies(url);
+        }
+    }
+    const paginationList = document.querySelector(".pagination__list");
+    if (paginationList) paginationList.addEventListener("click", (e => {
+        const item = e.target.closest(".pagination__item");
+        if (!item) return;
+        paginationList.querySelectorAll(".pagination__item").forEach((el => {
+            el.classList.remove("_active");
         }));
+        item.classList.add("_active");
+        loadByMode(item.textContent.trim());
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     }));
     menuLink.forEach((item => {
         item.addEventListener("click", (() => {
-            menuLink.forEach((item => {
-                item.classList.remove("_active");
-            }));
-            genreLinks.forEach((genre => {
-                if (genre) genre.classList.remove("_active");
-            }));
+            menuLink.forEach((el => el.classList.remove("_active")));
+            genreLinks.forEach((g => g && g.classList.remove("_active")));
             item.classList.add("_active");
+            document.querySelector("html")?.classList.remove("lock", "menu-open");
         }));
     }));
+    if (films) films.addEventListener("click", (() => {
+        window.currentApiUrl = API_URL_FILMS;
+        window.currentMode = "films";
+        window.currentPage = 1;
+        getMovies_films(API_URL_FILMS + "1");
+    }));
+    if (serials) serials.addEventListener("click", (() => {
+        window.currentApiUrl = API_URL_SERIALS;
+        window.currentMode = "serials";
+        window.currentPage = 1;
+        getMovies_serials(API_URL_SERIALS + "1");
+    }));
+    if (miniSerials) miniSerials.addEventListener("click", (() => {
+        window.currentApiUrl = API_URL_MINI_SERIALS;
+        window.currentMode = "mini";
+        window.currentPage = 1;
+        getMovies_miniSerials(API_URL_MINI_SERIALS + "1");
+    }));
+    if (tvShow) tvShow.addEventListener("click", (() => {
+        window.currentApiUrl = API_URL_TV_SHOW;
+        window.currentMode = "tv";
+        window.currentPage = 1;
+        getMovies_tvShow(API_URL_TV_SHOW + "1");
+    }));
+    if (top250) top250.addEventListener("click", (() => {
+        window.currentApiUrl = API_URL_POPULAR_250;
+        window.currentMode = "top250";
+        window.currentPage = 1;
+        getMovies_250(API_URL_POPULAR_250 + "1");
+    }));
+    if (headerLogo) headerLogo.addEventListener("click", (e => {
+        e.preventDefault();
+        window.currentApiUrl = API_URL_POPULAR;
+        window.currentMode = "popular";
+        window.currentPage = 1;
+        menuLink.forEach((el => el.classList.remove("_active")));
+        genreLinks.forEach((g => g && g.classList.remove("_active")));
+        getMovies(API_URL_POPULAR + "1");
+    }));
     genreLinks.forEach((genre => {
-        if (genre) genre.addEventListener("click", (() => {
+        if (!genre) return;
+        genre.addEventListener("click", (() => {
             menuLink.forEach((item => item.classList.remove("_active")));
-            genreLinks.forEach((item => {
-                if (item) item.classList.remove("_active");
-            }));
+            genreLinks.forEach((item => item && item.classList.remove("_active")));
             genre.classList.add("_active");
-            paginationItems.forEach((item => item.classList.remove("_active")));
-            if (paginationItems.length > 0) paginationItems[0].classList.add("_active");
-            for (let i = 5; i < paginationItems.length; i++) paginationItems[i].style.display = "none";
             const yearValue = document.getElementById("year-select")?.value || "";
             let baseUrl = "";
-            if (genre === action) baseUrl = API_URL_ACTION; else if (genre === comedy) baseUrl = API_URL_COMEDY; else if (genre === drama) baseUrl = API_URL_DRAMA; else if (genre === horror) baseUrl = API_URL_HORROR; else if (genre === scifi) baseUrl = API_URL_SCIFI; else if (genre === thriller) baseUrl = API_URL_THRILLER; else if (genre === fantasy) baseUrl = API_URL_FANTASY; else if (genre === adventure) baseUrl = API_URL_ADVENTURE; else if (genre === detective) baseUrl = API_URL_DETECTIVE; else if (genre === melodrama) baseUrl = API_URL_MELODRAMA; else if (genre === animatedmovies) baseUrl = API_URL_ANIMATEDMOVIES; else if (genre === anime) baseUrl = API_URL_ANIME; else if (genre === files_script_history) baseUrl = API_URL_HISTORY; else if (genre === documentaries) baseUrl = API_URL_DOCUMENTARIES; else if (genre === shortfilms) baseUrl = API_URL_SHORTFILMS;
-            if (yearValue && baseUrl) {
-                baseUrl = baseUrl.replace("&page=", "");
-                if (yearValue.includes("-")) {
-                    const [from, to] = yearValue.split("-");
-                    baseUrl += `&yearFrom=${from}&yearTo=${to}`;
-                } else baseUrl += `&yearFrom=${yearValue}&yearTo=${yearValue}`;
-                baseUrl += "&page=";
-            }
-            if (baseUrl) {
-                getMovies_genres(baseUrl);
-                window.currentApiUrl = baseUrl;
-            }
+            if (genre === action) baseUrl = API_URL_ACTION; else if (genre === comedy) baseUrl = API_URL_COMEDY; else if (genre === drama) baseUrl = API_URL_DRAMA; else if (genre === horror) baseUrl = API_URL_HORROR; else if (genre === scifi) baseUrl = API_URL_SCIFI; else if (genre === thriller) baseUrl = API_URL_THRILLER; else if (genre === fantasy) baseUrl = API_URL_FANTASY; else if (genre === adventure) baseUrl = API_URL_ADVENTURE; else if (genre === detective) baseUrl = API_URL_DETECTIVE; else if (genre === melodrama) baseUrl = API_URL_MELODRAMA; else if (genre === animatedmovies) baseUrl = API_URL_ANIMATEDMOVIES; else if (genre === anime) baseUrl = API_URL_ANIME; else if (genre === historyGenre) baseUrl = API_URL_HISTORY; else if (genre === documentaries) baseUrl = API_URL_DOCUMENTARIES; else if (genre === shortfilms) baseUrl = API_URL_SHORTFILMS;
+            if (!baseUrl) return;
+            baseUrl = baseUrl.replace(/&page=$/, "");
+            if (yearValue) if (yearValue.includes("-")) {
+                const [from, to] = yearValue.split("-");
+                baseUrl += `&yearFrom=${from}&yearTo=${to}`;
+            } else baseUrl += `&yearFrom=${yearValue}&yearTo=${yearValue}`;
+            baseUrl += "&page=";
+            window.currentApiUrl = baseUrl;
+            window.currentMode = "genres";
+            window.currentPage = 1;
+            getMovies_genres(baseUrl + "1");
             if (typeof closeSidebar === "function") closeSidebar();
         }));
     }));
-    films.addEventListener("click", (() => {
-        window.currentApiUrl = null;
-        getMovies_films(API_URL_FILMS);
-    }));
-    serials.addEventListener("click", (() => {
-        window.currentApiUrl = null;
-        getMovies_serials(API_URL_SERIALS);
-    }));
-    miniSerials.addEventListener("click", (() => {
-        window.currentApiUrl = null;
-        getMovies_miniSerials(API_URL_MINI_SERIALS);
-    }));
-    tvShow.addEventListener("click", (() => {
-        window.currentApiUrl = null;
-        getMovies_tvShow(API_URL_TV_SHOW);
-    }));
-    top250.addEventListener("click", (() => {
-        window.currentApiUrl = null;
-        getMovies_250(API_URL_POPULAR_250);
-    }));
-    headerLogo.addEventListener("click", (() => {
-        window.currentApiUrl = null;
-        genreLinks.forEach((genre => {
-            if (genre) genre.classList.remove("_active");
-        }));
-        getMovies(API_URL_POPULAR);
-    }));
-    headerLogo.addEventListener("click", (() => {
-        genreLinks.forEach((genre => {
-            if (genre) genre.classList.remove("_active");
-        }));
-        getMovies(API_URL_POPULAR);
-    }));
-    getMovies(API_URL_POPULAR);
-    menuLink.forEach((item => {
-        item.addEventListener("click", (() => {
-            document.querySelector("html").classList.remove("lock", "menu-open");
-            paginationItems.forEach((item => {
-                item.classList.remove("_active");
-            }));
-            if (item === top250) for (let i = 5; i < paginationItems.length; i++) paginationItems[i].style.display = "block"; else for (let i = 5; i < paginationItems.length; i++) paginationItems[i].style.display = "none";
-            paginationItems[0].classList.add("_active");
-        }));
-    }));
     async function getMovies(url) {
-        const resp = await fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-KEY": API_KEY
-            }
-        });
-        const respData = await resp.json();
-        showMovies(respData);
+        try {
+            const resp = await fetch(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                }
+            });
+            if (!resp.ok) throw new Error("Ошибка запроса: " + resp.status);
+            const respData = await resp.json();
+            showMovies(respData);
+        } catch (err) {
+            console.error(err);
+        }
     }
     async function getMovies_films(url) {
-        const resp = await fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-KEY": API_KEY
-            }
-        });
-        const respData = await resp.json();
-        showFilter(respData);
+        try {
+            const resp = await fetch(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                }
+            });
+            if (!resp.ok) throw new Error("Ошибка запроса: " + resp.status);
+            const respData = await resp.json();
+            showFilter(respData);
+        } catch (err) {
+            console.error(err);
+        }
     }
     async function getMovies_serials(url) {
-        const resp = await fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-KEY": API_KEY
-            }
-        });
-        const respData = await resp.json();
-        showFilter(respData);
+        try {
+            const resp = await fetch(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                }
+            });
+            if (!resp.ok) throw new Error("Ошибка запроса: " + resp.status);
+            const respData = await resp.json();
+            showFilter(respData);
+        } catch (err) {
+            console.error(err);
+        }
     }
     async function getMovies_miniSerials(url) {
-        const resp = await fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-KEY": API_KEY
-            }
-        });
-        const respData = await resp.json();
-        showFilter(respData);
+        try {
+            const resp = await fetch(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                }
+            });
+            if (!resp.ok) throw new Error("Ошибка запроса: " + resp.status);
+            const respData = await resp.json();
+            showFilter(respData);
+        } catch (err) {
+            console.error(err);
+        }
     }
     async function getMovies_tvShow(url) {
-        const resp = await fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-KEY": API_KEY
-            }
-        });
-        const respData = await resp.json();
-        showFilter(respData);
+        try {
+            const resp = await fetch(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                }
+            });
+            if (!resp.ok) throw new Error("Ошибка запроса: " + resp.status);
+            const respData = await resp.json();
+            showFilter(respData);
+        } catch (err) {
+            console.error(err);
+        }
     }
     async function getMovies_250(url) {
-        const resp = await fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-KEY": API_KEY
-            }
-        });
-        const respData = await resp.json();
-        showMovies(respData);
+        try {
+            const resp = await fetch(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                }
+            });
+            if (!resp.ok) throw new Error("Ошибка запроса: " + resp.status);
+            const respData = await resp.json();
+            showMovies(respData);
+        } catch (err) {
+            console.error(err);
+        }
     }
     async function getMovies_genres(url) {
-        const resp = await fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-KEY": API_KEY
-            }
-        });
-        const respData = await resp.json();
-        showFilter(respData);
+        try {
+            const resp = await fetch(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                }
+            });
+            if (!resp.ok) throw new Error("Ошибка запроса: " + resp.status);
+            const respData = await resp.json();
+            showFilter(respData);
+        } catch (err) {
+            console.error(err);
+        }
     }
     function getClassByRate(vote) {
-        if (vote >= 7) return "green"; else if (vote > 5) return "orange"; else return "red";
+        if (vote >= 7) return "green";
+        if (vote > 5) return "orange";
+        return "red";
     }
     function showMovies(data) {
         const moviesEl = document.querySelector(".movies");
-        document.querySelector(".movies").innerHTML = "";
-        data.films.forEach((movie => {
+        if (!moviesEl) return;
+        moviesEl.innerHTML = "";
+        const list = data.films || [];
+        list.forEach((movie => {
             const movieEl = document.createElement("div");
             movieEl.classList.add("movie");
-            movieEl.innerHTML = `\n\t\t<div class="movie__cover">\n\t\t\t<div class="movie__cover-img -ibg">\n\t\t\t\t<img src="${movie.posterUrlPreview}" alt="${movie.nameRu}">\n\t\t\t</div>\n\t\t</div>\n\t\t<div class="movie__info">\n\t\t\t<div class="movie__title">${movie.nameRu}</div>\n\t\t\t<div class="movie__category">${movie.genres.map((genre => ` ${genre.genre}`))}</div>\n\t\t\t${movie.rating && `\n\t\t\t<div class="movie__average movie__average_${getClassByRate(movie.rating)}">${movie.rating}</div>`}\n\t\t</div>\n\t\t\t\t`;
+            movieEl.innerHTML = `\n\t\t<div class="movie__cover">\n\t\t\t<div class="movie__cover-img -ibg">\n\t\t\t\t<img src="${movie.posterUrlPreview || ""}" alt="${movie.nameRu || ""}">\n\t\t\t</div>\n\t\t</div>\n\t\t<div class="movie__info">\n\t\t\t<div class="movie__title">${movie.nameRu || movie.nameEn || ""}</div>\n\t\t\t<div class="movie__category">${(movie.genres || []).map((g => ` ${g.genre}`)).join("")}</div>\n\t\t\t${movie.rating ? `<div class="movie__average movie__average_${getClassByRate(movie.rating)}">${movie.rating}</div>` : ""}\n\t\t</div>`;
             movieEl.addEventListener("click", (() => openModal(movie.filmId)));
             moviesEl.appendChild(movieEl);
         }));
+        updatePagination(data.pagesCount || 1, window.currentPage || 1);
     }
     function showFilter(data) {
         const moviesEl = document.querySelector(".movies");
-        document.querySelector(".pagination__list");
-        document.querySelector(".movies").innerHTML = "";
-        data.items.forEach((movie => {
+        if (!moviesEl) return;
+        moviesEl.innerHTML = "";
+        const list = data.items || [];
+        list.forEach((movie => {
             const movieEl = document.createElement("div");
             movieEl.classList.add("movie");
-            movieEl.innerHTML = `\n\t\t<div class="movie__cover">\n\t\t\t<div class="movie__cover-img -ibg">\n\t\t\t\t<img src="${movie.posterUrlPreview}" alt="${movie.nameRu}">\n\t\t\t</div>\n\t\t</div>\n\t\t<div class="movie__info">\n\t\t\t<div class="movie__title">${movie.nameRu}</div>\n\t\t\t<div class="movie__category">${movie.genres.map((genre => ` ${genre.genre}`))}</div>\n\t\t\t${movie.ratingKinopoisk && `\n\t\t\t<div class="movie__average movie__average_${getClassByRate(movie.ratingKinopoisk)}">${movie.ratingKinopoisk}</div>`}\n\t\t</div>\n\t\t\t\t`;
+            movieEl.innerHTML = `\n\t\t<div class="movie__cover">\n\t\t\t<div class="movie__cover-img -ibg">\n\t\t\t\t<img src="${movie.posterUrlPreview || ""}" alt="${movie.nameRu || ""}">\n\t\t\t</div>\n\t\t</div>\n\t\t<div class="movie__info">\n\t\t\t<div class="movie__title">${movie.nameRu || movie.nameEn || ""}</div>\n\t\t\t<div class="movie__category">${(movie.genres || []).map((g => ` ${g.genre}`)).join("")}</div>\n\t\t\t${movie.ratingKinopoisk ? `<div class="movie__average movie__average_${getClassByRate(movie.ratingKinopoisk)}">${movie.ratingKinopoisk}</div>` : ""}\n\t\t</div>`;
             movieEl.addEventListener("click", (() => openModal(movie.kinopoiskId)));
             moviesEl.appendChild(movieEl);
         }));
+        updatePagination(data.totalPages || 1, window.currentPage || 1);
     }
-    const script_form = document.querySelector("form");
+    const scriptForm = document.querySelector(".header__form") || document.querySelector("form");
     const search = document.querySelector(".header__search");
-    script_form.addEventListener("submit", (e => {
+    if (search) {
+        search.addEventListener("focus", (() => search.classList.add("_expanded")));
+        search.addEventListener("blur", (() => search.classList.remove("_expanded")));
+    }
+    if (scriptForm && search) scriptForm.addEventListener("submit", (e => {
         e.preventDefault();
-        const apiSearchUrl = `${API_URL_SEARCH}${search.value}`;
-        if (search.value) {
-            menuLink.forEach((item => item.classList.remove("_active")));
-            genreLinks.forEach((genre => {
-                if (genre) genre.classList.remove("_active");
-            }));
-            getMovies(apiSearchUrl);
-            search.value = "";
-        }
-    }));
-    const modalEl = document.querySelector(".modal");
-    async function openModal(id) {
-        const resp = await fetch(API_URL_MOVIE_DETAILS + id, {
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-KEY": API_KEY
-            }
-        });
-        const respData = await resp.json();
-        modalEl.classList.add("modal--show");
-        document.body.classList.add("stop-scrolling");
-        const originalUrl = respData.webUrl;
-        const modifiedUrl = originalUrl.replace("kino", "ss");
-        modalEl.innerHTML = `\n    <div class="modal__card">\n      <img class="modal__movie-backdrop" src="${respData.posterUrlPreview}" alt="">\n      <h2>\n        <span class="modal__movie-title">${respData.nameRu}</span>\n        <span class="modal__movie-release-year"> - ${respData.year}</span>\n      </h2>\n      <ul class="modal__movie-info">\n        <div class="loader"></div>\n        <li class="modal__movie-genre">Жанр - ${respData.genres.map((el => ` <span>${el.genre}</span>`))}</li>\n        ${respData.filmLength ? `<li class="modal__movie-runtime">Время - ${respData.filmLength} минут</li>` : ""}\n        <li >Сайт: <a class="modal__movie-site" href="${respData.webUrl}">${respData.webUrl}</a></li>\n        <li ><a class="modal__movie-play" href="${modifiedUrl}"><p>Play</p></a></li>\n        <li class="modal__movie-overview">Описание - ${respData.description}</li>\n      </ul>\n      <button type="button" class="modal__button-close">Закрыть</button>\n    </div>\n  `;
-        const btnClose = document.querySelector(".modal__button-close");
-        btnClose.addEventListener("click", (() => closeModal()));
-    }
-    function closeModal() {
-        modalEl.classList.remove("modal--show");
-        document.body.classList.remove("stop-scrolling");
-    }
-    const sidebar = document.getElementById("genres-sidebar");
-    const overlay = document.getElementById("overlay");
-    const openBtn = document.querySelector(".genres-button");
-    const closeBtn = document.querySelector(".sidebar__close");
-    function openSidebar() {
-        sidebar.classList.add("sidebar--open");
-        overlay.classList.add("overlay--active");
-        document.body.style.overflow = "hidden";
-    }
-    function closeSidebar() {
-        sidebar.classList.remove("sidebar--open");
-        overlay.classList.remove("overlay--active");
-        document.body.style.overflow = "";
-    }
-    openBtn.addEventListener("click", openSidebar);
-    closeBtn.addEventListener("click", closeSidebar);
-    overlay.addEventListener("click", closeSidebar);
-    document.addEventListener("keydown", (e => {
-        if (e.key === "Escape") closeSidebar();
-    }));
-    window.addEventListener("click", (e => {
-        if (e.target === modalEl) closeModal();
-    }));
-    window.addEventListener("keydown", (e => {
-        if (e.keyCode === 27) closeModal();
+        const query = search.value.trim();
+        if (!query) return;
+        menuLink.forEach((item => item.classList.remove("_active")));
+        genreLinks.forEach((genre => genre && genre.classList.remove("_active")));
+        window.currentApiUrl = `${API_URL_SEARCH}${encodeURIComponent(query)}&page=`;
+        window.currentMode = "search";
+        window.currentPage = 1;
+        getMovies(window.currentApiUrl + "1");
+        search.value = "";
+        search.blur();
     }));
     const genreSelect = document.getElementById("genre-select");
     const yearSelect = document.getElementById("year-select");
     const findBtn = document.getElementById("find-btn");
-    findBtn.addEventListener("click", (() => {
-        const genre = genreSelect.value;
-        const yearValue = yearSelect.value;
+    if (findBtn) findBtn.addEventListener("click", (() => {
+        const genre = genreSelect ? genreSelect.value : "";
+        const yearValue = yearSelect ? yearSelect.value : "";
         let url = "https://kinopoiskapiunofficial.tech/api/v2.2/films?order=RATING&type=ALL&ratingFrom=5&ratingTo=10";
         if (genre) url += `&genres=${genre}`;
         if (yearValue) if (yearValue.includes("-")) {
@@ -513,14 +544,68 @@
             url += `&yearFrom=${from}&yearTo=${to}`;
         } else url += `&yearFrom=${yearValue}&yearTo=${yearValue}`;
         url += "&page=";
-        document.querySelectorAll(".menu__link, .genres-list__item").forEach((el => {
-            el.classList.remove("_active");
-        }));
-        document.querySelectorAll(".pagination__item").forEach((el => el.classList.remove("_active")));
-        document.querySelector(".pagination__item")?.classList.add("_active");
-        getMovies_genres(url + "1");
+        menuLink.forEach((el => el.classList.remove("_active")));
+        genreLinks.forEach((g => g && g.classList.remove("_active")));
         window.currentApiUrl = url;
+        window.currentMode = "genres";
+        window.currentPage = 1;
+        getMovies_genres(url + "1");
     }));
+    const modalEl = document.querySelector(".modal");
+    async function openModal(id) {
+        if (!id || !modalEl) return;
+        modalEl.classList.add("modal--show");
+        document.body.classList.add("stop-scrolling");
+        try {
+            const resp = await fetch(API_URL_MOVIE_DETAILS + id, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                }
+            });
+            if (!resp.ok) throw new Error("Ошибка загрузки фильма");
+            const respData = await resp.json();
+            const webUrl = respData.webUrl || "#";
+            const modifiedUrl = String(webUrl).replace("https://www.kinopoisk.ru/film/", "https://kinogo.biz/");
+            modalEl.innerHTML = `\n\t\t<div class="modal__card">\n\t\t\t<img class="modal__movie-backdrop" src="${respData.posterUrlPreview || ""}" alt="">\n\t\t\t<h2>\n\t\t\t\t<span class="modal__movie-title">${respData.nameRu || ""}</span>\n\t\t\t\t<span class="modal__movie-release-year"> - ${respData.year || ""}</span>\n\t\t\t</h2>\n\t\t\t<ul class="modal__movie-info">\n\t\t\t\t<li class="modal__movie-genre">Жанр - ${(respData.genres || []).map((el => ` <span>${el.genre}</span>`)).join("")}</li>\n\t\t\t\t${respData.filmLength ? `<li class="modal__movie-runtime">Время - ${respData.filmLength} минут</li>` : ""}\n\t\t\t\t<li>Сайт: <a class="modal__movie-site" href="${webUrl}" target="_blank" rel="noopener">${webUrl}</a></li>\n\t\t\t\t<li><a class="modal__movie-play" href="${modifiedUrl}" target="_blank" rel="noopener"><p>Play</p></a></li>\n\t\t\t\t<li class="modal__movie-overview">Описание - ${respData.description || ""}</li>\n\t\t\t</ul>\n\t\t\t<button type="button" class="modal__button-close">Закрыть</button>\n\t\t</div>`;
+            modalEl.querySelector(".modal__button-close")?.addEventListener("click", closeModal);
+        } catch (err) {
+            console.error(err);
+            closeModal();
+        }
+    }
+    function closeModal() {
+        if (!modalEl) return;
+        modalEl.classList.remove("modal--show");
+        document.body.classList.remove("stop-scrolling");
+    }
+    window.addEventListener("click", (e => {
+        if (e.target === modalEl) closeModal();
+    }));
+    window.addEventListener("keydown", (e => {
+        if (e.key === "Escape") closeModal();
+    }));
+    const sidebar = document.getElementById("genres-sidebar");
+    const overlay = document.getElementById("overlay");
+    const openBtn = document.querySelector(".genres-button");
+    const closeBtn = document.querySelector(".sidebar__close");
+    function openSidebar() {
+        sidebar?.classList.add("sidebar--open");
+        overlay?.classList.add("overlay--active");
+        document.body.style.overflow = "hidden";
+    }
+    function closeSidebar() {
+        sidebar?.classList.remove("sidebar--open");
+        overlay?.classList.remove("overlay--active");
+        document.body.style.overflow = "";
+    }
+    openBtn?.addEventListener("click", openSidebar);
+    closeBtn?.addEventListener("click", closeSidebar);
+    overlay?.addEventListener("click", closeSidebar);
+    document.addEventListener("keydown", (e => {
+        if (e.key === "Escape") closeSidebar();
+    }));
+    getMovies(API_URL_POPULAR + "1");
     window["FLS"] = true;
     isWebp();
     menuInit();
