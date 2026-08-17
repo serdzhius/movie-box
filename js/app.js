@@ -808,22 +808,22 @@
         }));
         const modalEl = document.querySelector(".modal");
         async function openModal(id) {
-            if (!id || !modalEl) return;
+            const resp = await fetch(API_URL_MOVIE_DETAILS + id, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                }
+            });
+            const respData = await resp.json();
             modalEl.classList.add("modal--show");
             document.body.classList.add("stop-scrolling");
-            try {
-                const respData = await fetchJson(API_URL_MOVIE_DETAILS + id);
-                const webUrl = respData.webUrl || "#";
-                const modifiedUrl = String(webUrl).replace("https://www.kinopoisk.ru/film/", "https://kinogo.biz/");
-                modalEl.innerHTML = `\n\t\t\t<div class="modal__card">\n\t\t\t\t<img class="modal__movie-backdrop" src="${respData.posterUrlPreview || ""}" alt="">\n\t\t\t\t<h2>\n\t\t\t\t\t<span class="modal__movie-title">${respData.nameRu || ""}</span>\n\t\t\t\t\t<span class="modal__movie-release-year"> - ${respData.year || ""}</span>\n\t\t\t\t</h2>\n\t\t\t\t<ul class="modal__movie-info">\n\t\t\t\t\t<li class="modal__movie-genre">Жанр - ${(respData.genres || []).map((el => ` <span>${el.genre}</span>`)).join("")}</li>\n\t\t\t\t\t${respData.filmLength ? `<li class="modal__movie-runtime">Время - ${respData.filmLength} минут</li>` : ""}\n\t\t\t\t\t<li>Сайт: <a class="modal__movie-site" href="${webUrl}" target="_blank" rel="noopener">${webUrl}</a></li>\n\t\t\t\t\t<li><a class="modal__movie-play" href="${modifiedUrl}" target="_blank" rel="noopener"><p>Play</p></a></li>\n\t\t\t\t\t<li class="modal__movie-overview">Описание - ${respData.description || ""}</li>\n\t\t\t\t</ul>\n\t\t\t\t<button type="button" class="modal__button-close">Закрыть</button>\n\t\t\t</div>`;
-                modalEl.querySelector(".modal__button-close")?.addEventListener("click", closeModal);
-            } catch (err) {
-                console.error(err);
-                closeModal();
-            }
+            const originalUrl = respData.webUrl;
+            const modifiedUrl = originalUrl.replace("kino", "ss");
+            modalEl.innerHTML = `\n    <div class="modal__card">\n      <img class="modal__movie-backdrop" src="${respData.posterUrlPreview}" alt="">\n      <h2>\n        <span class="modal__movie-title">${respData.nameRu}</span>\n        <span class="modal__movie-release-year"> - ${respData.year}</span>\n      </h2>\n      <ul class="modal__movie-info">\n        <div class="loader"></div>\n        <li class="modal__movie-genre">Жанр - ${respData.genres.map((el => ` <span>${el.genre}</span>`))}</li>\n        ${respData.filmLength ? `<li class="modal__movie-runtime">Время - ${respData.filmLength} минут</li>` : ""}\n        <li >Сайт: <a class="modal__movie-site" href="${respData.webUrl}">${respData.webUrl}</a></li>\n        <li ><a class="modal__movie-play" href="${modifiedUrl}"><p>Play</p></a></li>\n        <li class="modal__movie-overview">Описание - ${respData.description}</li>\n      </ul>\n      <button type="button" class="modal__button-close">Закрыть</button>\n    </div>\n  `;
+            const btnClose = document.querySelector(".modal__button-close");
+            btnClose.addEventListener("click", (() => closeModal()));
         }
         function closeModal() {
-            if (!modalEl) return;
             modalEl.classList.remove("modal--show");
             document.body.classList.remove("stop-scrolling");
         }
